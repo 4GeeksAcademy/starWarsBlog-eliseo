@@ -41,7 +41,7 @@ export const Home = () => {
 
     return (
         <div className="text-center mt-5">
-            <h1>Star Wars API</h1>
+            <h1 className="text-warning">Star Wars API</h1>
 			<SearchBar /> {/* Add the SearchBar here */}
             <div className="container d-flex flex-row" style={{ overflowX: "scroll" }}>
                 {people.map((item, index) => (

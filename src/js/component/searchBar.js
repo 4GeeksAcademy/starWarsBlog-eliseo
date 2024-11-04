@@ -6,41 +6,50 @@ const SearchBar = () => {
     const [filteredResults, setFilteredResults] = useState([]);
     const navigate = useNavigate();
 
-    // Fetch data directly from API based on query
+    const fetchSearchResults = async () => {
+        if (!query.trim()) {
+            setFilteredResults([]);
+            return;
+        }
+
+        // Clear results before loading new data to avoid showing stale results
+        setFilteredResults([]);
+
+        try {
+            const timestamp = Date.now(); // Timestamp to bypass caching
+
+            const characterResponse = await fetch(`https://www.swapi.tech/api/people?search=${query}&_=${timestamp}`);
+            const characterData = await characterResponse.json();
+            const characters = characterData.results ? characterData.results.map(item => ({ ...item, type: "character" })) : [];
+
+            const planetResponse = await fetch(`https://www.swapi.tech/api/planets?search=${query}&_=${timestamp}`);
+            const planetData = await planetResponse.json();
+            const planets = planetData.results ? planetData.results.map(item => ({ ...item, type: "planet" })) : [];
+
+            const vehicleResponse = await fetch(`https://www.swapi.tech/api/vehicles?search=${query}&_=${timestamp}`);
+            const vehicleData = await vehicleResponse.json();
+            const vehicles = vehicleData.results ? vehicleData.results.map(item => ({ ...item, type: "vehicle" })) : [];
+
+            setFilteredResults([...characters, ...planets, ...vehicles]);
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+            setFilteredResults([]);
+        }
+    };
+
     useEffect(() => {
-        const fetchSearchResults = async () => {
-            if (!query.trim()) {
-                setFilteredResults([]);
-                return;
-            }
-
-            try {
-                const characterResponse = await fetch(`https://www.swapi.tech/api/people?search=${query}`);
-                const characterData = await characterResponse.json();
-                const characters = characterData.results.map(item => ({ ...item, type: "character" }));
-
-                const planetResponse = await fetch(`https://www.swapi.tech/api/planets?search=${query}`);
-                const planetData = await planetResponse.json();
-                const planets = planetData.results.map(item => ({ ...item, type: "planet" }));
-
-                const vehicleResponse = await fetch(`https://www.swapi.tech/api/vehicles?search=${query}`);
-                const vehicleData = await vehicleResponse.json();
-                const vehicles = vehicleData.results.map(item => ({ ...item, type: "vehicle" }));
-
-                // Combine all results and update the state
-                setFilteredResults([...characters, ...planets, ...vehicles]);
-            } catch (error) {
-                console.error("Error fetching search results:", error);
-            }
-        };
-
-        fetchSearchResults();
+        if (query) {
+            const timeoutId = setTimeout(fetchSearchResults, 300); // Debounce the API call
+            return () => clearTimeout(timeoutId);
+        } else {
+            setFilteredResults([]);
+        }
     }, [query]);
 
     const handleSelectItem = (type, uid) => {
         navigate(`/details/${type}/${uid}`);
-        setQuery(""); // Clear the query after navigation
-        setFilteredResults([]); // Clear autocomplete suggestions
+        setQuery("");
+        setFilteredResults([]);
     };
 
     return (
