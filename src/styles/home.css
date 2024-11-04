@@ -1,0 +1,30 @@
+/* Add this CSS to your styles file */
+.search-bar {
+    position: relative;
+    max-width: 300px;
+    margin: auto;
+}
+
+.autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    background: white;
+    z-index: 10;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background-color: #f0f0f0;
+}
