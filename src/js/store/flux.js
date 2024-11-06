@@ -14,6 +14,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             ],
             favorites: [],
+            characters: [],
+            planets: [],
+            vehicles: [],
         },
         actions: {
             // Use getActions to call a function within a function
@@ -24,6 +27,48 @@ const getState = ({ getStore, getActions, setStore }) => {
                 /**
                     fetch().then().then(data => setStore({ "foo": data.bar }))
                 */
+            },
+            // Fetch characters data
+            fetchCharacters: async (query = "") => {
+                try {
+                    const response = await fetch(`https://www.swapi.tech/api/people?search=${query}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStore({ characters: data.results });
+                    } else {
+                        console.error("Error fetching characters:", response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Error fetching characters:", error);
+                }
+            },
+            // Fetch planets data
+            fetchPlanets: async (query = "") => {
+                try {
+                    const response = await fetch(`https://www.swapi.tech/api/planets?search=${query}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStore({ planets: data.results });
+                    } else {
+                        console.error("Error fetching planets:", response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Error fetching planets:", error);
+                }
+            },
+            // Fetch vehicles data
+            fetchVehicles: async (query = "") => {
+                try {
+                    const response = await fetch(`https://www.swapi.tech/api/vehicles?search=${query}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setStore({ vehicles: data.results });
+                    } else {
+                        console.error("Error fetching vehicles:", response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Error fetching vehicles:", error);
+                }
             },
             toggleFavorite: (item) => {
                 // Validate item structure
